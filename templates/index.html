@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automata Studio - Professional Automata Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <svg class="header-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Automata Studio</h1>
+            </div>
+            <p>Professional Finite Automata Builder & Simulator</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('dfa')">DFA</button>
+            <button class="tab-btn" onclick="switchTab('nfa')">NFA</button>
+            <button class="tab-btn" onclick="switchTab('regex')">Regular Expression</button>
+            <button class="tab-btn" onclick="switchTab('turing')">Turing Machine</button>
+            <button class="tab-btn" onclick="switchTab('editor')">Visual Editor</button>
+            <button class="tab-btn" onclick="switchTab('ai')">AI Assistant</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- DFA Tab -->
+            <aside class="sidebar tab-content" id="dfa-tab">
+                <div class="section">
+                    <h3> Step 1: Define DFA</h3>
+                    <div class="input-group">
+                        <label>States (comma-separated) <span class="tooltip" title="Enter state names separated by commas, e.g., q0,q1,q2"></span></label>
+                        <input type="text" id="states" value="q0,q1,q2" placeholder="e.g., q0,q1,q2">
+                        <small>Example: q0,q1,q2</small>
+                    </div>
+                    <div class="input-group">
+                        <label>Alphabet (comma-separated) <span class="tooltip" title="Enter input symbols separated by commas, e.g., 0,1"></span></label>
+                        <input type="text" id="alphabet" value="0,1" placeholder="e.g., 0,1">
+                        <small>Example: 0,1</small>
+                    </div>
+                    <div class="input-group">
+                        <label>Start State <span class="tooltip" title="The initial state where DFA begins"></span></label>
+                        <input type="text" id="start-state" value="q0" placeholder="e.g., q0">
+                    </div>
+                    <div class="input-group">
+                        <label>Final States (comma-separated) <span class="tooltip" title="Accepting states where DFA accepts the input"></span></label>
+                        <input type="text" id="final-states" value="q2" placeholder="e.g., q2">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateTable()">Generate Transition Table</button>
+                </div>
+
+                <div class="section">
+                    <h3> Step 2: Define Transitions</h3>
+                    <div id="transition-table"></div>
+                    <button class="btn btn-success" onclick="drawDiagram()">Draw Diagram</button>
+                </div>
+
+                <div class="section">
+                    <h3> Operations</h3>
+                    <button class="btn btn-secondary" onclick="validateDFA()" title="Check if DFA is complete and valid">Validate DFA</button>
+                    <button class="btn btn-secondary" onclick="minimizeDFA()" title="Reduce DFA to minimum states using Hopcroft's Algorithm">Minimize DFA</button>
+                    <button class="btn btn-secondary" onclick="detectUnreachable()" title="Find states that cannot be reached from start state">Detect Unreachable</button>
+                </div>
+            </aside>
+
+            <!-- NFA Tab -->
+            <aside class="sidebar tab-content" id="nfa-tab" style="display:none;">
+                <div class="section">
+                    <h3> Define NFA</h3>
+                    <div class="input-group">
+                        <label>States <span class="tooltip" title="Enter state names separated by commas"></span></label>
+                        <input type="text" id="nfa-states" value="q0,q1,q2" placeholder="e.g., q0,q1,q2">
+                    </div>
+                    <div class="input-group">
+                        <label>Alphabet <span class="tooltip" title="Input symbols (ε for epsilon)"></span></label>
+                        <input type="text" id="nfa-alphabet" value="0,1,ε" placeholder="e.g., 0,1,ε">
+                    </div>
+                    <div class="input-group">
+                        <label>Start State</label>
+                        <input type="text" id="nfa-start" value="q0" placeholder="e.g., q0">
+                    </div>
+                    <div class="input-group">
+                        <label>Final States</label>
+                        <input type="text" id="nfa-final" value="q2" placeholder="e.g., q2">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateNFATable()">Generate NFA Table</button>
+                </div>
+                <div class="section">
+                    <h3> Transitions</h3>
+                    <div id="nfa-transition-table"></div>
+                    <button class="btn btn-success" onclick="drawNFADiagram()">Draw NFA</button>
+                </div>
+                <div class="section">
+                    <h3> Operations</h3>
+                    <button class="btn btn-secondary" onclick="convertNFAtoDFA()">Convert to DFA</button>
+                    <div class="simulator-controls" style="margin-top:15px;">
+                        <input type="text" id="nfa-input-string" placeholder="Test string" class="input-large">
+                        <button class="btn btn-run" onclick="simulateNFA()"> Run</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Regex Tab -->
+            <aside class="sidebar tab-content" id="regex-tab" style="display:none;">
+                <div class="section">
+                    <h3> Regular Expression</h3>
+                    <div class="input-group">
+                        <label>Enter Regular Expression <span class="tooltip" title="Use * for Kleene star, | for union"></span></label>
+                        <input type="text" id="regex-input" value="(0|1)*01" placeholder="e.g., (0|1)*01">
+                        <small>Operators: * (star), | (or), () (grouping)</small>
+                    </div>
+                    <button class="btn btn-primary" onclick="convertRegexToDFA()">Convert to DFA</button>
+                </div>
+                <div class="section">
+                    <h3> Examples</h3>
+                    <button class="btn btn-secondary" onclick="document.getElementById('regex-input').value='(0|1)*'">Binary strings</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('regex-input').value='(0|1)*01'">Ends with 01</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('regex-input').value='0*1*'">0s then 1s</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('regex-input').value='(0|1)*0(0|1)*'">Contains 0</button>
+                </div>
+            </aside>
+
+            <!-- Turing Machine Tab -->
+            <aside class="sidebar tab-content" id="turing-tab" style="display:none;">
+                <div class="section">
+                    <h3> Define Turing Machine</h3>
+                    <div class="input-group">
+                        <label>States <span class="tooltip" title="Enter state names"></span></label>
+                        <input type="text" id="tm-states" value="q0,q1,qaccept,qreject" placeholder="e.g., q0,q1,qaccept,qreject">
+                    </div>
+                    <div class="input-group">
+                        <label>Tape Alphabet <span class="tooltip" title="Include blank symbol _"></span></label>
+                        <input type="text" id="tm-alphabet" value="0,1,_" placeholder="e.g., 0,1,_">
+                    </div>
+                    <div class="input-group">
+                        <label>Start State</label>
+                        <input type="text" id="tm-start" value="q0" placeholder="e.g., q0">
+                    </div>
+                    <div class="input-group">
+                        <label>Accept State</label>
+                        <input type="text" id="tm-accept" value="qaccept" placeholder="e.g., qaccept">
+                    </div>
+                    <div class="input-group">
+                        <label>Reject State</label>
+                        <input type="text" id="tm-reject" value="qreject" placeholder="e.g., qreject">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateTMTable()">Generate TM Table</button>
+                </div>
+                <div class="section">
+                    <h3> Transitions</h3>
+                    <div id="tm-transition-table"></div>
+                    <button class="btn btn-success" onclick="drawTMDiagram()">Draw TM</button>
+                </div>
+                <div class="section">
+                    <h3> Test</h3>
+                    <div class="simulator-controls">
+                        <input type="text" id="tm-input-string" placeholder="Input tape" class="input-large">
+                        <button class="btn btn-run" onclick="simulateTM()"> Run</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Visual Editor Tab -->
+            <aside class="sidebar tab-content" id="editor-tab" style="display:none;">
+                <div class="section">
+                    <h3> Visual Editor</h3>
+                    <p style="color: #4a5568; margin-bottom: 15px;">Edit diagram interactively - changes update automatically!</p>
+                </div>
+                <div class="section">
+                    <h3> Load Diagram</h3>
+                    <button class="btn btn-primary" onclick="loadCurrentDiagram()">Load Current Automaton</button>
+                    <button class="btn btn-secondary" onclick="generateDiagramImage()">Generate Image</button>
+                </div>
+                <div class="section">
+                    <h3> Add State</h3>
+                    <div class="input-group">
+                        <label>State Name</label>
+                        <input type="text" id="editor-state-name" placeholder="e.g., q3">
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="editor-is-start"> Start State
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="editor-is-final"> Final State
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="addStateVisually()">Add State</button>
+                </div>
+                <div class="section">
+                    <h3> Add Transition</h3>
+                    <div class="input-group">
+                        <label>From State</label>
+                        <input type="text" id="editor-from" placeholder="e.g., q0">
+                    </div>
+                    <div class="input-group">
+                        <label>To State</label>
+                        <input type="text" id="editor-to" placeholder="e.g., q1">
+                    </div>
+                    <div class="input-group">
+                        <label>Symbol</label>
+                        <input type="text" id="editor-symbol" placeholder="e.g., 0">
+                    </div>
+                    <button class="btn btn-success" onclick="addTransitionVisually()">Add Transition</button>
+                </div>
+                <div class="section">
+                    <h3> Delete</h3>
+                    <button class="btn btn-secondary" onclick="deleteSelected()">Delete Selected</button>
+                    <button class="btn btn-secondary" onclick="clearDiagram()">Clear All</button>
+                </div>
+                <div class="section">
+                    <h3> Save Changes</h3>
+                    <button class="btn btn-success" onclick="saveChangesToDFA()">Save to DFA Tab</button>
+                    <div id="editor-status" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
+                </div>
+            </aside>
+
+            <!-- AI Assistant Tab -->
+            <aside class="sidebar tab-content" id="ai-tab" style="display:none;">
+                <div class="section">
+                    <h3> AI Assistant</h3>
+                    <p style="color: #4a5568; margin-bottom: 15px;">Get intelligent insights about your automaton</p>
+                </div>
+                <div class="section">
+                    <h3> Ask Questions</h3>
+                    <button class="btn btn-secondary" onclick="analyzeAutomaton()">Analyze Current Automaton</button>
+                    <button class="btn btn-secondary" onclick="explainTransition()">Explain Transitions</button>
+                    <button class="btn btn-secondary" onclick="suggestOptimizations()">Suggest Optimizations</button>
+                    <button class="btn btn-secondary" onclick="whatIfAnalysis()">What-If Analysis</button>
+                </div>
+                <div class="section">
+                    <h3> Custom Question</h3>
+                    <div class="input-group">
+                        <label>Ask AI anything about your automaton</label>
+                        <textarea id="custom-query" placeholder="e.g., What strings does this automaton accept?" style="width:100%; padding:10px; border:2px solid #cbd5e0; border-radius:6px; min-height:80px; font-family: inherit;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="askCustomQuestion()">Ask AI</button>
+                </div>
+                <div class="section">
+                    <h3> What-If Scenarios</h3>
+                    <div class="input-group">
+                        <label>Select Scenario</label>
+                        <select id="whatif-scenario" class="input-large" style="padding:10px;">
+                            <option value="add-state">Add a new state</option>
+                            <option value="remove-state">Remove a state</option>
+                            <option value="change-transition">Change a transition</option>
+                            <option value="add-final">Make state final</option>
+                            <option value="remove-final">Remove final state</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>State/Details</label>
+                        <input type="text" id="whatif-details" placeholder="e.g., q2">
+                    </div>
+                    <button class="btn btn-primary" onclick="runWhatIf()">Run What-If</button>
+                </div>
+                <div class="section">
+                    <h3> AI Response</h3>
+                    <div id="ai-response" style="background: #f7fafc; padding: 15px; border-radius: 8px; min-height: 200px; max-height: 400px; overflow-y: auto; border: 1px solid #cbd5e0;">
+                        <p style="color: #718096;">AI insights will appear here...</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Diagram Area -->
+            <main class="main-area">
+                <div class="diagram-section">
+                    <div class="diagram-header">
+                        <h2> DFA Diagram</h2>
+                        <div class="diagram-controls">
+                            <button class="btn-icon" onclick="resetLayout()" title="Reset Layout"></button>
+                            <button class="btn-icon" onclick="zoomIn()" title="Zoom In">+</button>
+                            <button class="btn-icon" onclick="zoomOut()" title="Zoom Out">-</button>
+                        </div>
+                    </div>
+                    <div id="cy" class="diagram-canvas"></div>
+                    <div class="diagram-info">
+                        <p> <strong>Tip:</strong> Use Visual Editor tab to edit the diagram interactively</p>
+                    </div>
+                </div>
+
+                <div class="simulator-section">
+                    <h3> Step 3: Test Your DFA</h3>
+                    <div class="simulator-controls">
+                        <input type="text" id="input-string" placeholder="Enter input string (e.g., 0110)" class="input-large">
+                        <button class="btn btn-run" onclick="simulate()"> Run Simulation</button>
+                        <button class="btn btn-reset" onclick="resetSim()"> Reset</button>
+                    </div>
+                    <div id="result" class="result-box"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
