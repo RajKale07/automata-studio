@@ -2,6 +2,99 @@ let cy;
 let animationInterval;
 let currentTab = 'dfa';
 
+// Resizable sidebar
+const resizer = document.getElementById('resizer');
+const sidebar = document.querySelector('.sidebar');
+
+if (resizer && sidebar) {
+    let isResizing = false;
+    
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        
+        const newWidth = e.clientX;
+        if (newWidth >= 280 && newWidth <= 600) {
+            sidebar.style.width = newWidth + 'px';
+        }
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        }
+    });
+    
+    // Reset on mouse leave
+    document.addEventListener('mouseleave', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        }
+    });
+}
+
+// Resizable diagram/simulator sections
+const hResizer = document.getElementById('h-resizer');
+const diagramSection = document.querySelector('.diagram-section');
+const simulatorSection = document.querySelector('.simulator-section');
+
+if (hResizer && diagramSection && simulatorSection) {
+    let isResizingH = false;
+    let startY = 0;
+    let startDiagramHeight = 0;
+    
+    hResizer.addEventListener('mousedown', (e) => {
+        isResizingH = true;
+        startY = e.clientY;
+        startDiagramHeight = diagramSection.offsetHeight;
+        document.body.style.cursor = 'row-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizingH) return;
+        
+        const deltaY = e.clientY - startY;
+        const newHeight = startDiagramHeight + deltaY;
+        
+        if (newHeight >= 300 && newHeight <= window.innerHeight - 300) {
+            diagramSection.style.flex = 'none';
+            diagramSection.style.height = newHeight + 'px';
+            if (cy) cy.resize();
+        }
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (isResizingH) {
+            isResizingH = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        }
+    });
+    
+    // Reset on mouse leave
+    document.addEventListener('mouseleave', () => {
+        if (isResizingH) {
+            isResizingH = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        }
+    });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeDiagram();
@@ -30,11 +123,21 @@ function switchTab(tabName) {
     }
     
     // Add active class to clicked button
-    event.target.classList.add('active');
+    const buttons = document.querySelectorAll('.tab-btn');
+    const tabNames = ['dfa', 'nfa', 'regex', 'turing', 'editor', 'ai'];
+    const index = tabNames.indexOf(tabName);
+    if (index !== -1 && buttons[index]) {
+        buttons[index].classList.add('active');
+    }
     
     // Clear diagram when switching tabs
     if (cy) {
         cy.elements().remove();
+    }
+    
+    // Trigger resize for cytoscape
+    if (cy) {
+        setTimeout(() => cy.resize(), 100);
     }
 }
 
