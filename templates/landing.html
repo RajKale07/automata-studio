@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automata Studio - Theory of Computation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body>
+    <!-- Automata Background -->
+    <div class="automata-bg"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="title">Automata Studio</h1>
+            <p class="subtitle">A Visual Learning Platform for Theory of Computation</p>
+            <a href="/app" class="btn-launch">Launch Application</a>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Problem Statement</h2>
+            <p class="section-text">
+                Theory of Computation remains one of the most abstract and challenging subjects in computer science education. 
+                Students struggle to visualize finite automata, understand state transitions, and grasp the equivalence between 
+                different computational models. Traditional teaching methods rely on static diagrams and manual trace execution, 
+                making it difficult to develop intuition for automata behavior and language recognition.
+            </p>
+        </div>
+    </section>
+
+    <!-- Core Features -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Core Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">DFA</div>
+                    <h3>Deterministic Finite Automata</h3>
+                    <p>Build and simulate DFAs with complete validation and step-by-step execution visualization</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">NFA</div>
+                    <h3>Non-deterministic Finite Automata</h3>
+                    <p>Create NFAs with epsilon transitions and visualize parallel state exploration</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">→</div>
+                    <h3>NFA to DFA Conversion</h3>
+                    <p>Automated subset construction algorithm with state mapping visualization</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">MIN</div>
+                    <h3>DFA Minimization</h3>
+                    <p>Hopcroft's algorithm implementation for optimal state reduction</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">RE</div>
+                    <h3>Regular Expression Converter</h3>
+                    <p>Thompson's construction for regex to NFA/DFA transformation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">TM</div>
+                    <h3>Turing Machine Simulator</h3>
+                    <p>Step-by-step tape operations with configurable transition functions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theoretical Foundations -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Theoretical Foundations</h2>
+            <div class="theory-grid">
+                <div class="theory-item">
+                    <h4>Hopcroft's Minimization</h4>
+                    <p>O(n log n) algorithm for DFA state reduction through partition refinement</p>
+                </div>
+                <div class="theory-item">
+                    <h4>Subset Construction</h4>
+                    <p>Rabin-Scott algorithm for determinizing non-deterministic automata</p>
+                </div>
+                <div class="theory-item">
+                    <h4>Thompson's Construction</h4>
+                    <p>Compositional NFA building from regular expression parse trees</p>
+                </div>
+                <div class="theory-item">
+                    <h4>Epsilon Closure</h4>
+                    <p>Transitive closure computation for ε-transition reachability</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <h4>Define Automaton</h4>
+                    <p>Specify states, alphabet, transitions, and accepting states</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <h4>Validate Structure</h4>
+                    <p>Automatic validation of completeness and correctness</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <h4>Visualize Graph</h4>
+                    <p>Interactive state diagram with Cytoscape.js rendering</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <h4>Test & Analyze</h4>
+                    <p>Simulate strings and apply transformations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Scope -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Future Scope</h2>
+            <ul class="scope-list">
+                <li>Pushdown Automata (PDA) for context-free language recognition</li>
+                <li>Context-Free Grammar (CFG) parser and derivation tree visualization</li>
+                <li>Multi-tape Turing Machine support for advanced computability</li>
+                <li>Automaton equivalence checking and language intersection</li>
+                <li>Export to LaTeX/TikZ for academic publications</li>
+                <li>Collaborative editing and automaton sharing</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Automata Studio © 2024 | Educational Project for Theory of Computation</p>
+            <a href="/app" class="footer-link">Launch Application →</a>
+        </div>
+    </footer>
+</body>
+</html>
