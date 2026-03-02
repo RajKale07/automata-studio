@@ -135,6 +135,20 @@ function switchTab(tabName) {
         cy.elements().remove();
     }
     
+    // Update diagram title based on active tab
+    const diagramTitle = document.getElementById('diagram-title');
+    if (diagramTitle) {
+        const titles = {
+            'dfa': 'DFA Diagram',
+            'nfa': 'NFA Diagram',
+            'regex': 'Regular Expression Diagram',
+            'turing': 'Turing Machine Diagram',
+            'editor': 'Visual Editor',
+            'ai': 'AI Assistant'
+        };
+        diagramTitle.textContent = titles[tabName] || 'Diagram';
+    }
+    
     // Trigger resize for cytoscape
     if (cy) {
         setTimeout(() => cy.resize(), 100);
