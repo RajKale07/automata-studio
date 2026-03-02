@@ -55,6 +55,9 @@ def nfa_to_dfa(nfa):
     marked = []
     state_map = {start_closure: dfa_start}
     
+    # Get alphabet without epsilon
+    alphabet_no_epsilon = [s for s in nfa.alphabet if s != 'ε']
+    
     while unmarked:
         current = unmarked.pop(0)
         marked.append(current)
@@ -64,10 +67,7 @@ def nfa_to_dfa(nfa):
         if any(s in nfa.final_states for s in current):
             dfa_final_states.append(current_name)
         
-        for symbol in nfa.alphabet:
-            if symbol == 'ε':
-                continue
-            
+        for symbol in alphabet_no_epsilon:
             next_states = set()
             for state in current:
                 key = f"{state},{symbol}"
@@ -75,12 +75,27 @@ def nfa_to_dfa(nfa):
                     for ns in nfa.transitions[key]:
                         next_states.add(ns)
             
+            # Always create a transition, even if it goes to empty set
             if next_states:
                 next_closure = tuple(sorted(nfa.epsilon_closure(next_states)))
-                if next_closure not in state_map:
+            else:
+                # Create a dead state for missing transitions
+                next_closure = tuple()
+            
+            if next_closure not in state_map:
+                if next_closure == tuple():
+                    state_map[next_closure] = 'dead'
+                else:
                     state_map[next_closure] = ','.join(next_closure)
-                    unmarked.append(next_closure)
-                
-                dfa_transitions[f"{current_name},{symbol}"] = state_map[next_closure]
+                unmarked.append(next_closure)
+            
+            dfa_transitions[f"{current_name},{symbol}"] = state_map[next_closure]
     
-    return DFA(dfa_states, [s for s in nfa.alphabet if s != 'ε'], dfa_transitions, dfa_start, dfa_final_states)
+    # Add dead state if it exists
+    if 'dead' in dfa_transitions.values():
+        dfa_states.append('dead')
+        # Dead state loops to itself on all symbols
+        for symbol in alphabet_no_epsilon:
+            dfa_transitions[f"dead,{symbol}"] = 'dead'
+    
+    return DFA(dfa_states, alphabet_no_epsilon, dfa_transitions, dfa_start, dfa_final_states)
